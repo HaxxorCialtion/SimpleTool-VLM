@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <defs>
+    <style>
+      .bg{fill:#f7f9fc}.title{font:700 34px Inter,Arial;fill:#14213d}.sub{font:500 18px Inter,Arial;fill:#51627b}.box{stroke:#8ba7d9;stroke-width:3;rx:20}.blue{fill:#e5efff}.violet{fill:#eee5fa;stroke:#a47bc6}.green{fill:#e7f5e7;stroke:#77ad7b}.orange{fill:#fff0dc;stroke:#d79b4e}.dark{fill:#14213d}.white{fill:#fff}.label{font:700 22px Inter,Arial;fill:#14213d}.small{font:500 17px Inter,Arial;fill:#33445e}.mono{font:600 18px Menlo,monospace;fill:#23395d}.arrow{stroke:#566b8c;stroke-width:4;fill:none;marker-end:url(#a)}
+    </style>
+    <marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#566b8c"/></marker>
+  </defs>
+  <rect width="1400" height="760" class="bg"/>
+  <text x="70" y="70" class="title">SimpleTool-VLM · pixels to parallel tool heads</text>
+  <text x="70" y="104" class="sub">The image carries invoice values; the prompt carries the task and policy.</text>
+  <rect x="70" y="165" width="270" height="155" class="box blue"/>
+  <text x="100" y="212" class="label">Image pixels</text><text x="100" y="250" class="small">invoice, scene, or UI</text><text x="100" y="284" class="small">no copied numeric OCR</text>
+  <rect x="400" y="165" width="330" height="155" class="box violet"/>
+  <text x="430" y="212" class="label">Shared prefix</text><text x="430" y="250" class="small">policy + user message</text><text x="430" y="284" class="small">+ JSON tool schema</text>
+  <path d="M340 242 H395" class="arrow"/>
+  <rect x="790" y="165" width="520" height="155" class="box green"/>
+  <text x="820" y="212" class="label">One prefill, active heads only</text><text x="820" y="250" class="small">function + arg1 … argN</text><text x="820" y="284" class="small">N = largest declared property count</text>
+  <path d="M730 242 H785" class="arrow"/>
+  <rect x="160" y="430" width="220" height="170" class="box orange"/><text x="210" y="480" class="label">function</text><text x="207" y="525" class="mono">record_expense</text><text x="207" y="565" class="small">or ask_expert</text>
+  <rect x="440" y="430" width="220" height="170" class="box blue"/><text x="500" y="480" class="label">arg1</text><text x="490" y="525" class="mono">INV-28176</text><text x="490" y="565" class="small">independent branch</text>
+  <rect x="720" y="430" width="220" height="170" class="box violet"/><text x="780" y="480" class="label">arg2</text><text x="770" y="525" class="mono">Cedar Office</text><text x="770" y="565" class="small">independent branch</text>
+  <rect x="1000" y="430" width="220" height="170" class="box green"/><text x="1060" y="480" class="label">arg3…N</text><text x="1032" y="525" class="mono">348 / null</text><text x="1032" y="565" class="small">schema-sized heads</text>
+  <path d="M1050 320 V380 H270 V425" class="arrow"/><path d="M1050 320 V390 H550 V425" class="arrow"/><path d="M1050 320 V400 H830 V425" class="arrow"/><path d="M1050 320 V410 H1110 V425" class="arrow"/>
+  <rect x="250" y="665" width="900" height="55" rx="16" class="dark"/><text x="700" y="701" text-anchor="middle" style="font:700 20px Inter,Arial;fill:#fff">structured tool call · auditable raw branches · Direct / Adaptive</text>
+</svg>

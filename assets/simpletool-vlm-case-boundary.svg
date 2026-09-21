@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780">
+  <defs><style>.bg{fill:#f7f9fc}.title{font:700 34px Inter,Arial;fill:#14213d}.sub{font:500 18px Inter,Arial;fill:#51627b}.h{font:700 24px Inter,Arial;fill:#14213d}.p{font:500 18px Inter,Arial;fill:#34445f}.good{fill:#e8f6ed;stroke:#56a36c;stroke-width:3}.warn{fill:#fff0df;stroke:#d48645;stroke-width:3}.soon{fill:#e8efff;stroke:#6e91d5;stroke-width:3}.tag{font:700 16px Inter,Arial;fill:#fff}.dark{fill:#14213d}</style></defs>
+  <rect width="1400" height="780" class="bg"/>
+  <text x="70" y="70" class="title">What each SimpleTool release demonstrates</text>
+  <text x="70" y="104" class="sub">Keep the evidence boundary visible when moving from multimodal calls to embodied action.</text>
+  <rect x="70" y="155" width="390" height="495" rx="24" class="good"/>
+  <rect x="95" y="180" width="145" height="34" rx="17" class="dark"/><text x="167" y="203" text-anchor="middle" class="tag">VALIDATED BASELINE</text>
+  <text x="100" y="270" class="h">SimpleTool-VLM</text>
+  <text x="100" y="315" class="p">Image pixels + policy prompt</text><text x="100" y="350" class="p">→ Direct / Adaptive heads</text><text x="100" y="385" class="p">→ legal structured tool call</text>
+  <text x="100" y="455" class="p">Invoice video demonstrates:</text><text x="120" y="490" class="p">• real image input</text><text x="120" y="525" class="p">• dynamic head count</text><text x="120" y="560" class="p">• raw output and timing</text>
+  <rect x="510" y="155" width="390" height="495" rx="24" class="warn"/>
+  <rect x="535" y="180" width="190" height="34" rx="17" fill="#b75c2e"/><text x="630" y="203" text-anchor="middle" class="tag">PROMPT-ASSISTED</text>
+  <text x="540" y="270" class="h">Embodied preview</text>
+  <text x="540" y="315" class="p">MuJoCo Panda red-cube grasp</text><text x="540" y="350" class="p">RGB-D locate + tool loop</text>
+  <text x="540" y="420" class="p">The prompt supplied:</text><text x="560" y="455" class="p">• geometry and object size</text><text x="560" y="490" class="p">• grasp order and heights</text><text x="560" y="525" class="p">• gripper settings</text><text x="560" y="560" class="p">• final lift condition</text><text x="540" y="615" style="font:700 17px Inter,Arial;fill:#a14d27">Not autonomous trajectory discovery.</text>
+  <rect x="950" y="155" width="380" height="495" rx="24" class="soon"/>
+  <rect x="975" y="180" width="145" height="34" rx="17" fill="#4169c7"/><text x="1048" y="203" text-anchor="middle" class="tag">COMING SOON</text>
+  <text x="980" y="270" class="h">SimpleTool-VLA</text>
+  <text x="980" y="315" class="p">Learned pixel-grounded actions</text><text x="980" y="350" class="p">with reproducible embodied eval</text>
+  <text x="980" y="430" class="p">Future release will separate:</text><text x="1000" y="465" class="p">• information from pixels</text><text x="1000" y="500" class="p">• tool-provided state</text><text x="1000" y="535" class="p">• prompt priors</text><text x="1000" y="570" class="p">• learned policy</text>
+  <text x="700" y="720" text-anchor="middle" class="sub">Claims follow the evidence, not the demo title.</text>
+</svg>

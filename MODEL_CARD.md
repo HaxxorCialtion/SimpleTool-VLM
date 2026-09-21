@@ -1,5 +1,7 @@
 # SimpleTool-VLM-4B model card
 
+Repository: [HaxxorCialtion/SimpleTool-VLM](https://github.com/HaxxorCialtion/SimpleTool-VLM) · Original method: [ICML 2026 RealtimeTool](https://icml.cc/virtual/2026/poster/62617)
+
 ## Summary
 
 `corrected_mixed_frozen_r4` is a Qwen3-VL-4B multimodal checkpoint fine-tuned for SimpleTool's parallel structured output protocol. The model receives an image plus a policy/task prompt and a function-tool schema. It produces independent textual branches for `function` and the arguments required by the schema.
@@ -20,6 +22,11 @@ Each head terminates on its own protocol stop marker. The public runtime dynamic
 The checkpoint was trained from a Qwen3-VL-4B base with mixed text/image structured-call data. The internal deployment smoke test passed the prepared invoice contract on the released serving path. Those probes do not establish general OCR accuracy, accounting correctness, or performance on arbitrary images.
 
 Strict adapter-to-merged numerical parity was not established. The merged checkpoint was independently loaded and probed. Do not describe this release as a drop-in OCR replacement or as a reasoning trace generator.
+
+The accompanying invoice video is a protocol demonstration. The accompanying
+Panda grasp video is prompt-assisted: the prompt contains geometry, grasp
+ordering, heights, gripper values, and the RGB-D localization prior. It must
+not be presented as autonomous VLA planning.
 
 ## Quantization
 
