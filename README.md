@@ -1,5 +1,9 @@
 # SimpleTool-VLM
 
+> The multimodal line is maintained separately from the ICML 2026
+> `SimpleTool` / `RealtimeTool` release. The original research implementation
+> remains at [HaxxorCialtion/SimpleTool](https://github.com/HaxxorCialtion/SimpleTool).
+
 SimpleTool-VLM is a research release of a Qwen3-VL-4B model adapted for structured tool calls from images and text. It emits a function name and only the argument heads required by the supplied tool schema. The public release contains inference code and reproducibility notes; model weights are hosted separately on Hugging Face.
 
 ## Highlights
@@ -8,6 +12,18 @@ SimpleTool-VLM is a research release of a Qwen3-VL-4B model adapted for structur
 - Function plus dynamically sized `arg1...argN` heads (`N` is the maximum property count in the supplied tools).
 - Image input is passed as pixels; invoice values are not copied into hidden prompt fields.
 - Raw branch outputs and legality are preserved for auditing.
+
+## Release tracks
+
+| Track | Status | Scope |
+|---|---|---|
+| **SimpleTool-VLM** | Available | Qwen3-VL-4B image/text to structured tool calls; Direct is the reproducible baseline. |
+| **SimpleTool-VLM-Adaptive** | Research track | Short adaptive `content` before the tool heads; experiments and limitations are documented separately. |
+| **SimpleTool-VLA** | Coming soon | Vision-language-action interfaces and embodied control integrations. |
+
+The tracks share the positional SimpleTool protocol, but they are separate
+research claims. Results from the Adaptive track should not be read as a
+replacement for the validated Direct baseline.
 
 ## Intended use
 
@@ -23,7 +39,20 @@ The quantized variants use the same task adapter and tokenizer contract; backend
 
 ## Quick start
 
-The lightweight HTTP implementation is in `inference/`. It accepts one PNG, text messages, and OpenAI-style function tools. See `examples/invoice_request.json`. The service returns `prediction.raw`, `prediction.legal`, `events`, and server timings.
+The lightweight HTTP implementation is in `inference/`. It accepts one PNG, text messages, and OpenAI-style function tools. See [`examples/invoice_request.json`](examples/invoice_request.json). The service returns `prediction.raw`, `prediction.legal`, `events`, and server timings.
+
+## Adaptive track
+
+The Adaptive track is described in [`adaptive_cot/README.md`](adaptive_cot/README.md).
+It is intentionally kept separate because short generated content is not a
+guaranteed reasoning trace and current distribution-shifted evaluations do not
+show a stable advantage over Direct.
+
+## VLA roadmap
+
+[`vla/README.md`](vla/README.md) records the planned SimpleTool-VLA interface.
+The prompt-assisted Panda grasp case is a research preview with an explicit
+claim boundary; the autonomous VLA release is **coming soon**.
 
 ## Limitations
 
