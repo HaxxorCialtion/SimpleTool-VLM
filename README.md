@@ -7,7 +7,8 @@
 > retained as native-template results and must not be reported as SimpleTool v2
 > prompt results. A versioned `simpletool-v2-vlm-v1` builder is now included for
 > fixed-template comparison and future retraining. See the
-> [full prompt-template audit](docs/PROMPT_TEMPLATE_AUDIT_2026-10-13.md).
+> [full prompt-template audit](docs/PROMPT_TEMPLATE_AUDIT_2026-10-13.md) and
+> [retraining contract](docs/SIMPLETOOL_V2_VLM_RETRAIN.md).
 
 > The multimodal line is maintained separately from the ICML 2026
 > `SimpleTool` / `RealtimeTool` release. The original research implementation
