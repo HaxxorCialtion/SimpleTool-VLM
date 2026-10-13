@@ -1,4 +1,8 @@
-"""GPU HTTP API. Run python -m vlm_release.remote_api --model CHECKPOINT.
+"""GPU HTTP API. Run python -m inference.remote_api --model CHECKPOINT.
+
+The released checkpoint requires ``--prompt-template qwen-native-v0``. The
+``simpletool-v2-vlm-v1`` option exists for controlled template experiments and
+future checkpoints; it must not be used to relabel old evaluation results.
 
 POST /v1/simpletool: optional image_base64 (plain PNG base64), text-only messages,
 OpenAI function tools, mode direct|adaptive. Returns prediction/model/gpu/timings/
@@ -33,6 +37,7 @@ import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from .infer import prepare_input, run_prediction
+from .prompting import PROMPT_TEMPLATES, QWEN_NATIVE_V0
 from .protocol import tool_schemas, SPECIAL
 
 MAX_BODY = 12 * 1024 * 1024
@@ -91,11 +96,13 @@ def validate_payload(body):
 
 
 class Runtime:
-    def __init__(self, model, queue_size=4):
+    def __init__(self, model, queue_size=4, prompt_template=QWEN_NATIVE_V0):
         self.ready = False
         self.error = None
         self.model_path = str(Path(model).resolve())
+        self.prompt_template = prompt_template
         self.identity = {'id': 'corrected_mixed_frozen_r4', 'path': self.model_path,
+            'prompt_template': prompt_template,
             'config_sha256': hashlib.sha256((Path(model) / 'config.json').read_bytes()).hexdigest()}
         manifest_path = Path(model) / 'MODEL_SHA256.json'
         if manifest_path.exists():
@@ -156,7 +163,7 @@ class Runtime:
                     row = {'messages': messages, 'tools': body['tools'], 'image_paths': [str(image)]}
                 else:
                     row = {'messages': messages, 'tools': body['tools']}
-                inp = prepare_input(self.processor, row, Path(directory)); inp['tools'] = body['tools']
+                inp = prepare_input(self.processor, row, Path(directory), self.prompt_template); inp['tools'] = body['tools']
                 # The same processor handles text-only rows when no image is supplied.
                 encoded = self.processor(text=[inp['prompt']], images=inp['pictures'] or None, return_tensors='pt')
                 if encoded['input_ids'].shape[1] + 48 + 64 > 8192:
@@ -250,10 +257,12 @@ def main():
     ap.add_argument('--model', required=True); ap.add_argument('--host', default='0.0.0.0')
     ap.add_argument('--port', type=int, default=8000); ap.add_argument('--tensor-parallel-size', type=int, default=1)
     ap.add_argument('--queue-size', type=int, default=4)
+    ap.add_argument('--prompt-template', choices=PROMPT_TEMPLATES, default=QWEN_NATIVE_V0,
+                    help='Must match the checkpoint training template')
     args = ap.parse_args()
     if not 1 <= args.queue_size <= 16:
         ap.error('queue-size must be 1..16')
-    runtime = Runtime(args.model, args.queue_size)
+    runtime = Runtime(args.model, args.queue_size, args.prompt_template)
     server = Server((args.host, args.port), Handler, runtime)
     # Keep vLLM initialization in the main thread: multiprocessing/signal setup
     # may require it. The HTTP thread serves readiness=503 during model loading.

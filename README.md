@@ -1,5 +1,14 @@
 # SimpleTool-VLM
 
+> **Prompt-template audit (2026-10-13):** the currently published 4B/FP8
+> checkpoint was trained and evaluated with the Qwen3-VL native chat template
+> (`qwen-native-v0`). It was **not** trained with the text-only ICML SimpleTool
+> v2 prompt (`## Available Tools:` + `history:`). Old checkpoint results are
+> retained as native-template results and must not be reported as SimpleTool v2
+> prompt results. A versioned `simpletool-v2-vlm-v1` builder is now included for
+> fixed-template comparison and future retraining. See the
+> [full prompt-template audit](docs/PROMPT_TEMPLATE_AUDIT_2026-10-13.md).
+
 > The multimodal line is maintained separately from the ICML 2026
 > `SimpleTool` / `RealtimeTool` release. The original research implementation
 > remains at [HaxxorCialtion/SimpleTool](https://github.com/HaxxorCialtion/SimpleTool).
@@ -14,6 +23,7 @@ SimpleTool-VLM is a research release of a Qwen3-VL-4B model adapted for structur
 - Function plus dynamically sized `arg1...argN` heads (`N` is the maximum property count in the supplied tools).
 - Image input is passed as pixels; invoice values are not copied into hidden prompt fields.
 - Raw branch outputs and legality are preserved for auditing.
+- Explicit prompt-template identity in inference results and model metadata.
 
 ![SimpleTool-VLM architecture](assets/simpletool-vlm-architecture.svg)
 
@@ -63,6 +73,20 @@ The quantized variants use the same task adapter and tokenizer contract; backend
 
 The lightweight HTTP implementation is in `inference/`. It accepts one PNG, text messages, and OpenAI-style function tools. See [`examples/invoice_request.json`](examples/invoice_request.json). The service returns `prediction.raw`, `prediction.legal`, `events`, and server timings.
 
+The released checkpoint must be served with its actual training template:
+
+```bash
+python -m inference.remote_api \
+  --model /path/to/SimpleTool-VLM-FP8 \
+  --prompt-template qwen-native-v0
+```
+
+For the controlled ICML-v2-layout comparison, use
+`--prompt-template simpletool-v2-vlm-v1` only with a checkpoint trained or
+explicitly evaluated on that template. The builder is in
+[`inference/prompting.py`](inference/prompting.py), with byte-layout tests in
+[`tests/test_prompting.py`](tests/test_prompting.py).
+
 ## Adaptive track
 
 The Adaptive track is described in [`adaptive_cot/README.md`](adaptive_cot/README.md).
@@ -78,7 +102,11 @@ claim boundary; the autonomous VLA release is **coming soon**.
 
 ## Limitations
 
-This release does not claim strict adapter-to-merged numerical parity, arbitrary-image robustness, OCR superiority, or native Qwen chain-of-thought. Adaptive `content` is a short task-controlled field. The included invoice demo is an end-to-end protocol demonstration, not a financial approval system.
+This release does not claim prompt compatibility with the ICML SimpleTool v2
+checkpoint, strict adapter-to-merged numerical parity, arbitrary-image
+robustness, OCR superiority, or native Qwen chain-of-thought. Adaptive
+`content` is a short task-controlled field. The included invoice demo is an
+end-to-end protocol demonstration, not a financial approval system.
 
 ## License and attribution
 

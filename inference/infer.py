@@ -14,8 +14,10 @@ from pathlib import Path
 
 try:
     from .protocol import HEADS, SPECIAL, ProtocolError, active_heads, content_prefix, head_prefixes, strict_decode, tool_schemas
+    from .prompting import PROMPT_TEMPLATES, QWEN_NATIVE_V0, build_prompt
 except ImportError:
     from protocol import HEADS, SPECIAL, ProtocolError, active_heads, content_prefix, head_prefixes, strict_decode, tool_schemas
+    from prompting import PROMPT_TEMPLATES, QWEN_NATIVE_V0, build_prompt
 
 
 def sha(path):
@@ -30,8 +32,13 @@ def mode_for(row, mode):
     return value
 
 
-def prepare_input(processor, row, data_dir, tool_template="native"):
-    """Read input fields only. No precomputed row.prompt or target is trusted."""
+def prepare_input(processor, row, data_dir, prompt_template=QWEN_NATIVE_V0):
+    """Read inputs and build an explicitly versioned prompt.
+
+    The released checkpoint used ``qwen-native-v0``. The separate
+    ``simpletool-v2-vlm-v1`` option is for controlled comparisons and future
+    training; switching a checkpoint's template is not a valid evaluation.
+    """
     from PIL import Image
     messages=copy.deepcopy(row['messages']); tool_schemas(row['tools'])
     paths=[]
@@ -54,20 +61,8 @@ def prepare_input(processor, row, data_dir, tool_template="native"):
         hashes.append(sha(path))
     if row.get('image_sha256') is not None and hashes!=row['image_sha256']:
         raise ValueError('Image hash mismatch')
-    if tool_template not in ('native', 'legacy'):
-        raise ValueError('Unknown tool template: '+tool_template)
-    template_kwargs = {'tools': row['tools']} if tool_template == 'native' else {}
-    if tool_template == 'legacy':
-        tool_text = '# Available Tools\n' + '\n'.join(json.dumps(t, ensure_ascii=False) for t in row['tools'])
-        system = next((m for m in messages if m['role'] == 'system'), None)
-        if system is None:
-            messages.insert(0, {'role': 'system', 'content': tool_text})
-        elif isinstance(system.get('content'), str):
-            system['content'] += '\n\n' + tool_text
-        else:
-            raise ValueError('Legacy tool template requires a text system message')
-    prompt=processor.apply_chat_template(messages,**template_kwargs,tokenize=False,
-                                          add_generation_prompt=True,enable_thinking=False)
+    prompt=build_prompt(processor, messages, row['tools'], prompt_template,
+                        image_count=len(pictures), history=row.get('history'))
     return dict(prompt=prompt,pictures=pictures,image_paths=list(map(str,paths)),image_sha256=hashes,image_sizes=sizes)
 
 
@@ -138,7 +133,8 @@ def main():
     ap.add_argument('--output',type=Path,required=True,help='New empty output directory')
     ap.add_argument('--mode',choices=['direct','adaptive','dataset'],default='dataset')
     ap.add_argument('--head-execution',choices=['parallel','serial'],default='parallel')
-    ap.add_argument('--tool-template',choices=['native','legacy'],default='native')
+    ap.add_argument('--prompt-template',choices=PROMPT_TEMPLATES,default=QWEN_NATIVE_V0,
+                    help='Must match the checkpoint training template')
     ap.add_argument('--limit',type=int);ap.add_argument('--cpu-contract-only',action='store_true')
     ap.add_argument('--max-model-len',type=int,default=8192)
     ap.add_argument('--content-max-tokens',type=int,default=96);ap.add_argument('--head-max-tokens',type=int,default=128)
@@ -159,7 +155,7 @@ def main():
     if not rows:raise ValueError('No records selected')
     prepared=[]
     for row in rows:
-        inp=prepare_input(processor,row,args.data.parent,args.tool_template);inp['tools']=row['tools'];prepared.append(inp)
+        inp=prepare_input(processor,row,args.data.parent,args.prompt_template);inp['tools']=row['tools'];prepared.append(inp)
     init=0.0;engine=None;SamplingParams=None;version=None
     if not args.cpu_contract_only:
         from vllm import LLM,SamplingParams,__version__
@@ -201,7 +197,7 @@ def main():
             stream.write(json.dumps(prediction,ensure_ascii=False)+'\n');stream.flush();results.append(prediction)
     warm=results[1:]
     summary=dict(cpu_contract_only=args.cpu_contract_only,records=len(results),model=args.model,vllm_version=version,
-                 data_sha256=sha(args.data),initialization_seconds=init,mode=args.mode,head_execution=args.head_execution,tool_template=args.tool_template,
+                 data_sha256=sha(args.data),initialization_seconds=init,mode=args.mode,head_execution=args.head_execution,prompt_template=args.prompt_template,
                  prefix_caching_enabled=not args.disable_prefix_cache,
                  cache_caveat='Cache enabled is not proof of a cache hit or exactly one prefill. Serial warms cache differently.',
                  latency_scope='Blocking engine calls; preparation before evaluation excluded. First record reported separately.',

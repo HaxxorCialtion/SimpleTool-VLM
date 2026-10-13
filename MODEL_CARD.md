@@ -1,5 +1,9 @@
 # SimpleTool-VLM-4B model card
 
+> **Template identity:** `corrected_mixed_frozen_r4` and its FP8 export were
+> trained/evaluated with `qwen-native-v0`, using the Qwen3-VL chat template and
+> native tool rendering. They are not ICML SimpleTool v2 prompt checkpoints.
+
 Repository: [HaxxorCialtion/SimpleTool-VLM](https://github.com/HaxxorCialtion/SimpleTool-VLM) · Original method: [ICML 2026 RealtimeTool](https://icml.cc/virtual/2026/poster/62617)
 
 ## Summary
@@ -19,9 +23,19 @@ Each head terminates on its own protocol stop marker. The public runtime dynamic
 
 ## Training and evaluation boundary
 
-The checkpoint was trained from a Qwen3-VL-4B base with mixed text/image structured-call data. The internal deployment smoke test passed the prepared invoice contract on the released serving path. Those probes do not establish general OCR accuracy, accounting correctness, or performance on arbitrary images.
+The checkpoint was trained from a Qwen3-VL-4B base with mixed text/image
+structured-call data. Training and the released serving path called the
+Qwen3-VL processor's native chat template with tool schemas. They did not use
+the hand-built `## Available Tools:` and `history:` layout from
+`SimpleTool/01_benchmark.py::build_prompt(..., "v2")`. The internal deployment
+smoke test passed the prepared invoice contract on that native-template path.
+Those probes do not establish ICML-v2-template compatibility, general OCR
+accuracy, accounting correctness, or performance on arbitrary images.
 
-Strict adapter-to-merged numerical parity was not established. The merged checkpoint was independently loaded and probed. Do not describe this release as a drop-in OCR replacement or as a reasoning trace generator.
+Strict adapter-to-merged numerical parity was not established. The merged
+checkpoint was independently loaded and probed. Do not describe this release
+as a drop-in OCR replacement, an ICML-v2-template checkpoint, or a reasoning
+trace generator.
 
 The accompanying invoice video is a protocol demonstration. The accompanying
 Panda grasp video is prompt-assisted: the prompt contains geometry, grasp
